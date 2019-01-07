@@ -1,0 +1,15 @@
+{
+	"neuron_params": {
+		"e_rev_E": 0.0,
+		"e_rev_I": -100.0,
+		"tau_syn_E": 2.0,
+		"tau_syn_I": 2.0,
+		"v_rest": -70.0,
+		"v_reset": -80.0,
+		"v_thresh": -65.0,
+		"tau_refrac": 2.0,
+		"tau_m": 10,
+		"cm": 0.2
+	},
+	"weight" : 0.015
+}

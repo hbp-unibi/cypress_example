@@ -1,0 +1,6 @@
+build*/
+*.pyc
+*.bak
+resource/backend/nmpi/lib
+.idea/
+*kdev4*
