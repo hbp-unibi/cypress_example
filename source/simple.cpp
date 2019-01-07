@@ -111,12 +111,17 @@ int main(int argc, const char *argv[])
     pyplot::ylabel("Conductance in mS");
     
     pyplot::subplot(3,1,3);
-    pyplot::eventplot(std::vector<std::vector<Real>>({pop.signals().get_spikes()}));
+    pyplot::eventplot(std::vector<std::vector<Real>>(spikes));
     pyplot::title("Spike Times");
     pyplot::xlabel("Time in ms");
     pyplot::ylabel("Neuron ID");
     pyplot::xlim(0,100);
-    pyplot::ylim(size_t(0),pop.size()+1);
+    if(spikes.size()>1){
+        pyplot::ylim(-0.5, spikes.size()-0.5);
+    }
+    else{
+        pyplot::ylim(0.5, 1.5);
+    }
     pyplot::tight_layout();
     pyplot::show();
 
