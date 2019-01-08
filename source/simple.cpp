@@ -105,7 +105,7 @@ int main(int argc, const char *argv[])
     pyplot::ylabel("Voltage in mV");
     
     pyplot::subplot(3,1,2);
-    pyplot::plot(time, voltage);
+    pyplot::plot(time, gsyn);
     pyplot::title("Conductance for simulator " + std::string(argv[1]));
     pyplot::xlabel("Time in ms");
     pyplot::ylabel("Conductance in mS");
