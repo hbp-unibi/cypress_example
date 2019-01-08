@@ -14,7 +14,7 @@ cd ~/venvs/
 "
 virtualenv --system-site-packages nest
 source nest/bin/activate
-pip install cython
+pip install cython -U
 cd nest
 wget https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz
 tar -xzvf v2.14.0.tar.gz
