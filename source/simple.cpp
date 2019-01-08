@@ -83,7 +83,7 @@ int main(int argc, const char *argv[])
 	// Print the spike times for each target neuron
 	std::vector<std::vector<Real>> spikes;
 	for (size_t i = 0; i < pop.size(); i++) {
-		std::cout << "Spike times for source neuron " << i << std::endl;
+		std::cout << "Spike times for target neuron " << i << std::endl;
 		std::cout << pop[i].signals().data(0);
 		spikes.push_back(pop[i].signals().get_spikes());
 	}
