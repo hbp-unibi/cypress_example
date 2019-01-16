@@ -31,8 +31,9 @@
 #include <fstream>
 #include <iostream>
 
-
 using namespace cypress;
+
+double runtime = 100.0;  // Simulation runtime in ms
 
 int main(int argc, const char *argv[])
 {
@@ -43,36 +44,43 @@ int main(int argc, const char *argv[])
 
 	global_logger().min_level(LogSeverity::INFO);
 
-    // Reading the configuration file
+	// Reading the configuration file
 	std::ifstream ifs("../config/parameters.json");
 	if (!ifs.good()) {
 		throw std::runtime_error("Could not open config file");
 	}
 	Json config;
 	config << ifs;
-    
-    // Parsing NeuronParameters
+
+	// Parsing NeuronParameters
 	NeuronParameter neuro_params(IfCondExp::inst(), config["neuron_params"]);
 
-    // Creating the network
+	// Create the network
 	auto netw = Network();
 
-     // Create a population of 1 neuron, record the membrane voltage and spikes
-    auto pop = netw.create_population<IfCondExp>(
-	    1, neuro_params.parameter(), IfCondExpSignals({"v", "spikes", "gsyn_exc"}));
-    
-    // Definition of source spike times
-	std::vector<cypress::Real> spike_times({50.0});
-    // Create spike source population
-	auto pop_source = netw.create_population<SpikeSourceArray>(
-	    1, SpikeSourceArrayParameters(spike_times), SpikeSourceArraySignals({"spikes"}));
-    
-    // Connect populations with a one-to-one connection
-	netw.add_connection(pop_source, pop,
-	                    Connector::one_to_one(cypress::Real(config["weight"])));
+	// Create a population of 1 neuron, record the membrane voltage, synaptic
+	// conductance and spikes. Use Neuron Parameters from config files
+	auto pop = netw.create_population<IfCondExp>(
+	    1, neuro_params.parameter(),
+	    IfCondExpSignals({"v", "spikes", "gsyn_exc"}));
 
-    // Run the simulation for 100 seconds
-	netw.run(argv[1], 100.0, argc, argv);
+	// Definition of source spike times
+	std::vector<cypress::Real> spike_times({50.0});
+
+	// Create spike source population with one virtual neuron
+	auto pop_source = netw.create_population<SpikeSourceArray>(
+	    1, SpikeSourceArrayParameters(spike_times),
+	    SpikeSourceArraySignals({"spikes"}));
+
+	// Connect populations using a one-to-one connection, all connections share
+	// the same weight, and a delay of 1.0 ms
+	netw.add_connection(
+	    pop_source, pop,
+	    Connector::one_to_one(cypress::Real(config["weight"]), 1.0));
+
+	// Run the simulation for runtime milliseconds, argv[1] is the first command
+	// line argument and should contain the simulator name
+	netw.run(argv[1], runtime, argc, argv);
 
 	// Print the spike times for each source neuron
 	for (size_t i = 0; i < pop_source.size(); i++) {
@@ -87,43 +95,44 @@ int main(int argc, const char *argv[])
 		std::cout << pop[i].signals().data(0);
 		spikes.push_back(pop[i].signals().get_spikes());
 	}
-	
-    // Plot membrane voltage and spike times
-    auto v_and_time = pop.signals().get_v();
-    auto g_and_time = pop.signals().get_gsyn_exc();
-    std::vector<Real> time, voltage, gsyn;
-    for(size_t i = 0; i<v_and_time.rows(); i++){
-        time.push_back(v_and_time(i,0));
-        voltage.push_back(v_and_time(i,1));
-        gsyn.push_back(g_and_time(i,1));
-    }
-    pyplot::figure_size(600,800);
-    pyplot::subplot(3,1,1);
-    pyplot::plot(time, voltage);
-    pyplot::title("Membrane voltage for simulator " + std::string(argv[1]));
-    pyplot::xlabel("Time in ms");
-    pyplot::ylabel("Voltage in mV");
-    
-    pyplot::subplot(3,1,2);
-    pyplot::plot(time, gsyn);
-    pyplot::title("Conductance for simulator " + std::string(argv[1]));
-    pyplot::xlabel("Time in ms");
-    pyplot::ylabel("Conductance in mS");
-    
-    pyplot::subplot(3,1,3);
-    pyplot::eventplot(std::vector<std::vector<Real>>(spikes));
-    pyplot::title("Spike Times");
-    pyplot::xlabel("Time in ms");
-    pyplot::ylabel("Neuron ID");
-    pyplot::xlim(0,100);
-    if(spikes.size()>1){
-        pyplot::ylim(-0.5, spikes.size()-0.5);
-    }
-    else{
-        pyplot::ylim(0.5, 1.5);
-    }
-    pyplot::tight_layout();
-    pyplot::show();
+
+	// Plot membrane voltage and spike times
+	auto v_and_time = pop.signals().get_v();
+	auto g_and_time = pop.signals().get_gsyn_exc();
+	std::vector<Real> time, voltage, gsyn;
+	for (size_t i = 0; i < v_and_time.rows(); i++) {
+		time.push_back(v_and_time(i, 0));
+		voltage.push_back(v_and_time(i, 1));
+		gsyn.push_back(g_and_time(i, 1));
+	}
+
+	pyplot::figure_size(600, 800);
+	pyplot::subplot(3, 1, 1);
+	pyplot::plot(time, voltage);
+	pyplot::title("Membrane voltage for simulator " + std::string(argv[1]));
+	pyplot::xlabel("Time in ms");
+	pyplot::ylabel("Voltage in mV");
+
+	pyplot::subplot(3, 1, 2);
+	pyplot::plot(time, gsyn);
+	pyplot::title("Conductance for simulator " + std::string(argv[1]));
+	pyplot::xlabel("Time in ms");
+	pyplot::ylabel("Conductance in mS");
+
+	pyplot::subplot(3, 1, 3);
+	pyplot::eventplot(spikes);
+	pyplot::title("Spike Times");
+	pyplot::xlabel("Time in ms");
+	pyplot::ylabel("Neuron ID");
+	pyplot::xlim(0, int(runtime));
+	if (spikes.size() > 1) {
+		pyplot::ylim(-0.5, spikes.size() - 0.5);
+	}
+	else {
+		pyplot::ylim(0.5, 1.5);
+	}
+	pyplot::tight_layout();
+	pyplot::show();
 
 	return 0;
 }
