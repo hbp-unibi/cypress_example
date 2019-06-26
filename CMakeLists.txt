@@ -44,6 +44,9 @@ endif()
 
 find_package(PythonLibs 2.7 REQUIRED )
 
+# Add configuration option for static linking
+set(STATIC_LINKING FALSE CACHE BOOL "True for static linking")
+
 # Link statically
 if(STATIC_LINKING)
 	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
