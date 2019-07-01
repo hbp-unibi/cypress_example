@@ -78,6 +78,9 @@ int main(int argc, const char *argv[])
 	    pop_source, pop,
 	    Connector::one_to_one(cypress::Real(config["weight"]), 1.0));
 
+	// Calls graphviz to create visualization of the network, see graph.dot.pdf
+	create_dot(netw, "Simple Network");
+
 	// Run the simulation for runtime milliseconds, argv[1] is the first command
 	// line argument and should contain the simulator name
 	netw.run(argv[1], runtime, argc, argv);
