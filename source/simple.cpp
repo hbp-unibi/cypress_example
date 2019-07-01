@@ -50,7 +50,7 @@ int main(int argc, const char *argv[])
 		throw std::runtime_error("Could not open config file");
 	}
 	Json config;
-	config << ifs;
+	ifs >> config;
 
 	// Parsing NeuronParameters
 	NeuronParameter neuro_params(IfCondExp::inst(), config["neuron_params"]);
