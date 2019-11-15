@@ -27,7 +27,7 @@ if(UPDATE_CYPRESS)
     ExternalProject_Add(cypress_ext
         GIT_REPOSITORY        "https://github.com/hbp-unibi/cypress/"
         GIT_TAG               master
-        CMAKE_ARGS            -DSTATIC_LINKING=${STATIC_LINKING} -DCMAKE_INSTALL_PREFIX:path=<INSTALL_DIR> -DCMAKE_BUILD_TYPE:STRING=${DCMAKE_BUILD_TYPE} -DBUILD_TEST_EXAMPLES=False
+        CMAKE_ARGS            -DSTATIC_LINKING=${STATIC_LINKING} -DCMAKE_INSTALL_PREFIX:path=<INSTALL_DIR> -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DBUILD_TEST_EXAMPLES=False
         INSTALL_COMMAND 	  ""
         UPDATE_COMMAND git pull
         EXCLUDE_FROM_ALL      TRUE
@@ -37,7 +37,7 @@ else()
     ExternalProject_Add(cypress_ext
         GIT_REPOSITORY        "https://github.com/hbp-unibi/cypress/"
         GIT_TAG               master
-        CMAKE_ARGS            -DSTATIC_LINKING=${STATIC_LINKING} -DCMAKE_INSTALL_PREFIX:path=<INSTALL_DIR> -DCMAKE_BUILD_TYPE:STRING=${DCMAKE_BUILD_TYPE} -DBUILD_TEST_EXAMPLES=False
+        CMAKE_ARGS            -DSTATIC_LINKING=${STATIC_LINKING} -DCMAKE_INSTALL_PREFIX:path=<INSTALL_DIR> -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} -DBUILD_TEST_EXAMPLES=False
         INSTALL_COMMAND 	  ""
         UPDATE_COMMAND ""
         EXCLUDE_FROM_ALL      TRUE
