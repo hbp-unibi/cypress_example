@@ -2,34 +2,34 @@
 mkdir ~/venvs
 cd ~/venvs/
 
-: "
-virtualenv --system-site-packages spinnaker4
-source spinnaker4/bin/activate
-pip install sPyNNaker8
-python -m spynnaker8.setup-pynn
-python -c "import spynnaker8"
-deactivate
-
-cd ~/venvs/
-"
-virtualenv --system-site-packages nest
+# Nest and SpiNNaker installation
+virtualenv --python=python3 --system-site-packages nest
 source nest/bin/activate
 pip install cython -U
 cd nest
-wget https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz
-tar -xzvf v2.14.0.tar.gz
-cd nest-simulator-2.14.0/ && mkdir build && cd build
+wget https://github.com/nest/nest-simulator/archive/v2.18.0.tar.gz
+tar -xzvf v2.18.0.tar.gz
+cd nest-simulator-2.18.0/ && mkdir build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX:PATH=~/venvs/nest/
-make -j8 && make install
-pip install pyNN==0.9.2 neo==0.5.2 lazyarray
+make -j && make install
+pip install pyNN==0.9.5 neo==0.6.1 lazyarray
 deactivate
-: " 
+
 cd ~/venvs/
+virtualenv --python=python3 --system-site-packages spinnaker
+source spinnaker/bin/activate
+pip install sPyNNaker8=='1!5.1.0'
+python -m spynnaker8.setup_pynn
+python -c "import pyNN.spiNNaker"
+deactivate
 
-git clone https://github.com/electronicvisions/spikey_demo.git spikey
+# Spikey installation
+:"
+cd ~/venvs/
+git clone https://github.com/costrau/spikey_demo spikey
 cd spikey
-./waf setup --project=deb-pynn@0.6
-./waf configure
-./waf install --targets=*
-
+python3 waf setup --project=deb-pynn@0.6 --repo-db-url=https://github.com/costrau/projects
+python3 waf configure
+python3 waf install --targets=*
 "
+
