@@ -102,11 +102,14 @@ int main(int argc, const char *argv[])
 	// Plot membrane voltage and spike times
 	auto v_and_time = pop.signals().get_v();
 	auto g_and_time = pop.signals().get_gsyn_exc();
-	std::vector<Real> time, voltage, gsyn;
+	std::vector<Real> time, voltage, gsyn, gsyn_time;
 	for (size_t i = 0; i < v_and_time.rows(); i++) {
 		time.push_back(v_and_time(i, 0));
 		voltage.push_back(v_and_time(i, 1));
-		gsyn.push_back(g_and_time(i, 1));
+	}
+	for(size_t i = 0; i < g_and_time.rows(); i++){
+		gsyn.push_back(g_and_time(i,0));
+		gsyn_time.push_back(g_and_time(i,1));
 	}
 
 	pyplot::figure_size(600, 800);
@@ -117,7 +120,7 @@ int main(int argc, const char *argv[])
 	pyplot::ylabel("Voltage in mV");
 
 	pyplot::subplot(3, 1, 2);
-	pyplot::plot(time, gsyn);
+	pyplot::plot(gsyn_time, gsyn);
 	pyplot::title("Conductance for simulator " + std::string(argv[1]));
 	pyplot::xlabel("Time in ms");
 	pyplot::ylabel("Conductance in mS");
